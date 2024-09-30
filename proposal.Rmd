@@ -1,1 +1,82 @@
-hihi
+---
+title: "Your Actual Proposal Title"
+author: "Your Actual Name"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+# Contributions
+# Introduction
+# Data Description
+# Preliminary Results
+# Bibliography
+
+```{r setup, echo=FALSE, warning=FALSE, message=FALSE}
+# Set CRAN mirror
+options(repos = c(CRAN = "https://cloud.r-project.org/"))
+```
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+# Install the NHANES package
+install.packages("NHANES")
+
+# Load the package
+library(NHANES)
+library(dplyr)
+library(ggplot2)
+
+
+# View available datasets
+data(package = "NHANES")
+
+# Load the main dataset
+data(NHANES)
+
+# Select only the columns you need and filter out rows with missing values
+nhanes_data <- NHANES %>%
+  select(BMI, Poverty, PhysActiveDays, Age, SleepHrsNight, Gender) %>%
+  filter(!is.na(BMI), !is.na(Poverty), !is.na(PhysActiveDays), !is.na(Age), !is.na(SleepHrsNight), !is.na(Gender))
+
+# Check the first few rows to make sure everything looks correct
+head(nhanes_data)
+
+```
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+# Convert Gender to a factor (if not already)
+nhanes_data$Gender <- as.factor(nhanes_data$Gender)
+# Fit a linear model
+lm_model <- lm(log(BMI) ~ Poverty + PhysActiveDays + Age + SleepHrsNight + Gender, data = nhanes_data)
+
+# Summary of the model
+summary(lm_model)
+
+# Residuals vs Fitted
+plot(lm_model, which = 1)
+
+# Normal Q-Q plot
+plot(lm_model, which = 2)
+
+# Scale-Location plot (homoscedasticity)
+plot(lm_model, which = 3)
+
+# Residuals vs Leverage (to check for influential data points)
+plot(lm_model, which = 5)
+
+# Scatter plot for continuous variables
+ggplot(nhanes_data, aes(x = PhysActiveDays, y = BMI)) + geom_point() + geom_smooth(method = "lm", col = "red") + labs(title = "BMI vs PhysActiveDays")
+
+ggplot(nhanes_data, aes(x = Poverty, y = BMI)) + geom_point() + geom_smooth(method = "lm", col = "red") + labs(title = "BMI vs Poverty")
+
+# Boxplot for Gender
+ggplot(nhanes_data, aes(x = Gender, y = BMI)) + geom_boxplot() + labs(title = "BMI vs Gender")
+
+```
+
