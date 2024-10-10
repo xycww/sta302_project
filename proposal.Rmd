@@ -79,90 +79,143 @@ fitted_values = fitted(lm_model)
 residual_values = resid(lm_model)
      
 plot(fitted_values, residual_values, 
-     main = "NHANES: fitted versus residual values", 
+     main = "Figure1: fitted versus residual values", 
      xlab = "Fitted", 
      ylab = "Residuals")
 ```
-```{r}
-plot(lm_model, which=1)
-```
+
 
 ```{r}
 fitted_values = fitted(lm_model)
 sresidual_values = rstandard(lm_model)
      
 plot(fitted_values, sresidual_values, 
-     main = "NAHANES: fitted versus Standardized Residuals values", 
+     main = "Figure2: fitted versus Standardized Residuals values", 
      xlab = "Fitted", 
      ylab = "Standardized Residuals")
 ```
-```{r}
-plot(lm_model, which=3)
-```
-```{r}
-hist(residual_values,
-     main = "Standardized residuals histogram",
-     xlab = "Standardized residuals")
-```
+
 
 ```{r}
 hist(sresidual_values,
-     main = "Standardized residuals histogram",
+     main = "Figure3: Standardized residuals histogram",
      xlab = "Standardized residuals")
 ```
+
 ```{r}
-plot(nhanes_data[, c(7, 2, 3, 4, 5, 6)], col="cadetblue")
+# Set up the plotting area for a 2x3 grid (2 rows, 3 columns)
+par(mfrow = c(2, 3))
+
+# Plot residuals against Poverty
+plot(nhanes_data$Poverty, residual_values, 
+     main = "Figure4: Poverty vs. Residuals", 
+     xlab = "Poverty", 
+     ylab = "Residuals")
+
+# Plot residuals against Age
+plot(nhanes_data$Age, residual_values, 
+     main = "Figure5: Age vs. Residuals", 
+     xlab = "Age", 
+     ylab = "Residuals")
+
+# Plot residuals against Gender
+plot(nhanes_data$Gender, residual_values, 
+     main = "Figure6: Gender vs. Residuals", 
+     xlab = "Gender", 
+     ylab = "Residuals")
+
+# Plot residuals against PhysActiveDays
+plot(nhanes_data$PhysActiveDays, residual_values, 
+     main = "NAHANES: Physical Active Days vs. Residuals", 
+     xlab = "Physical Active Days", 
+     ylab = "Residuals")
+
+# Plot residuals against SleepHrsNight
+plot(nhanes_data$SleepHrsNight, residual_values, 
+     main = "NAHANES: Sleep Hours vs. Residuals", 
+     xlab = "Sleep Hours", 
+     ylab = "Residuals")
+
+# Reset the plotting area to default
+par(mfrow = c(1, 1))
+
+```
+
+```{r}
+plot(nhanes_data[, c(1, 2, 3, 4, 5, 6)], col="cadetblue")
 ```
 ```{r}
-BMI_values = lm_model$log_BMI
+BMI_values = log(nhanes_data$BMI)
 fitted_values = fitted(lm_model)
 
 plot(fitted_values, BMI_values,
-     main = "BMI versus regression fit",
+     main = "Figure7: BMI versus regression fit",
      xlab = "Fitted values", ylab = "BMI")
 abline(0, 1, 
        col=c("blue"), lty=1)
 legend("bottomright", legend=c("y = x line"),
        col=c("blue"), lty=1)
 ```
-```{r}
-par(mfrow=c(1, 2))
-plot(lm_model, which = 1)
-plot(lm_model, which = 3)
-```
-```{r}
-par(mfrow=c(1, 2))
 
-hist(rstandard(lm_model),
-     main = "Standardized residuals histogram",
-     xlab = "Standardized residuals")
 
-plot(fit, which=2)
-```
 ```{r}
 # Normal Q-Q plot
 plot(lm_model, which = 2)
 
-# Scale-Location plot (homoscedasticity)
-plot(lm_model, which = 3)
-
-# Residuals vs Leverage (to check for influential data points)
-plot(lm_model, which = 5)
 
 # Scatter plot for continuous variables
-ggplot(nhanes_data, aes(x = PhysActiveDays, y = log_BMI)) + geom_point() + geom_smooth(method = "lm", col = "red") + labs(title = "BMI vs PhysActiveDays")
+plot(nhanes_data$Age, log(nhanes_data$BMI), 
+     main = "NAHANES: Physical Active Days vs. BMI", 
+     xlab = "Age", 
+     ylab = "BMI")
 
-ggplot(nhanes_data, aes(x = Poverty, y = log_BMI)) + geom_point() + geom_smooth(method = "lm", col = "red") + labs(title = "BMI vs Poverty")
 
-# Boxplot for Gender
-ggplot(nhanes_data, aes(x = Gender, y = log_BMI)) + geom_boxplot() + labs(title = "BMI vs Gender")
+fit <- lm(log(nhanes_data$BMI) ~ nhanes_data$Age)
 
-# Boxplot for Gender
-ggplot(nhanes_data, aes(x = SleepHrsNight, y = log_BMI)) + geom_point() + geom_smooth(method = "lm", col = "red") + labs(title = "BMI vs Poverty")
+# Add the fitted regression line
+abline(fit, col = "red", lwd = 2)
 
-# Boxplot for Gender
-ggplot(nhanes_data, aes(x = Age, y = log_BMI)) + geom_point() + geom_smooth(method = "lm", col = "red") + labs(title = "BMI vs Poverty")
-#correlation matrix, linear regression
+
+# Scatter plot for continuous variables
+plot(nhanes_data$Gender, log(nhanes_data$BMI), 
+     main = "NAHANES: Physical Active Days vs. Gender", 
+     xlab = "Gender", 
+     ylab = "BMI")
+
+fit <- lm(log(nhanes_data$BMI) ~ nhanes_data$Gender)
+
+# Add the fitted regression line
+abline(fit, col = "red", lwd = 2)
+
+plot(nhanes_data$Poverty, log(nhanes_data$BMI), 
+     main = "NAHANES: Physical Active Days vs. Poverty", 
+     xlab = "Poverty", 
+     ylab = "BMI")
+
+fit <- lm(log(nhanes_data$BMI) ~ nhanes_data$Poverty)
+
+# Add the fitted regression line
+abline(fit, col = "red", lwd = 2)
+
+plot(nhanes_data$SleepHrsNight, log(nhanes_data$BMI), 
+     main = "NAHANES: Physical Active Days vs. SleepHrsNight", 
+     xlab = "SleepHrsNight", 
+     ylab = "BMI")
+
+fit <- lm(log(nhanes_data$BMI) ~ nhanes_data$SleepHrsNight)
+
+# Add the fitted regression line
+abline(fit, col = "red", lwd = 2)
+
+plot(nhanes_data$PhysActiveDays, log(nhanes_data$BMI), 
+     main = "NAHANES: Physical Active Days vs. PhysActiveDays", 
+     xlab = "PhysActiveDays", 
+     ylab = "BMI")
+fit <- lm(log(nhanes_data$BMI) ~ nhanes_data$PhysActiveDays)
+
+# Add the fitted regression line
+abline(fit, col = "red", lwd = 2)
+
 ```
 
 ```{r}
