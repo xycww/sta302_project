@@ -24,10 +24,6 @@ options(repos = c(CRAN = "https://cloud.r-project.org/"))
 ```
 
 ```{r}
-#| echo: false
-#| warning: false
-#| message: false
-
 # Install the NHANES package
 install.packages("NHANES")
 
@@ -36,17 +32,23 @@ library(NHANES)
 library(dplyr)
 library(ggplot2)
 
-
 # View available datasets
 data(package = "NHANES")
 
 # Load the main dataset
 data(NHANES)
 
-# Select only the columns you need and filter out rows with missing values
+# Select only the columns of the predictor variables and filter out rows with missing values
 nhanes_data <- NHANES %>%
   select(BMI, Poverty, PhysActiveDays, Age, SleepHrsNight, Gender) %>%
-  filter(!is.na(BMI), !is.na(Poverty), !is.na(PhysActiveDays), !is.na(Age), !is.na(SleepHrsNight), !is.na(Gender))
+  filter(
+    !is.na(BMI),
+    !is.na(Poverty),
+    !is.na(PhysActiveDays),
+    !is.na(Age),
+    !is.na(SleepHrsNight),
+    !is.na(Gender)
+  )
 
 
 # Check the first few rows to make sure everything looks correct
@@ -55,18 +57,15 @@ head(nhanes_data)
 ```
 
 ```{r}
-#| echo: false
-#| warning: false
-#| message: false
-
-# Convert Gender to a factor (if not already)
+# Convert Gender to a factor
 nhanes_data$Gender <- as.factor(nhanes_data$Gender)
+
 # Fit a linear model
-lm_model <- lm(log(BMI) ~ Poverty + PhysActiveDays + Age + SleepHrsNight + Gender, data = nhanes_data)
+lm_model <- lm(log(BMI) ~ Poverty + PhysActiveDays + Age + SleepHrsNight + Gender,
+               data = nhanes_data)
 
 # Summary of the model
 summary(lm_model)
-
 ```
 
 
@@ -74,42 +73,76 @@ summary(lm_model)
 ```{r}
 # Plot histograms for each variable
 par(mfrow = c(2, 3))  # Arrange plots in 2 rows and 3 columns
-hist(nhanes_data$BMI, main="BMI Distribution", xlab="BMI", col="lightblue")
-hist(nhanes_data$Poverty, main="Poverty Index Distribution", xlab="Poverty Index", col="lightgreen")
-hist(nhanes_data$PhysActiveDays, main="Physical Activity Days Distribution", xlab="Phys Active Days", col="lightcoral")
-hist(nhanes_data$Age, main="Age Distribution", xlab="Age", col="lightyellow")
-hist(nhanes_data$SleepHrsNight, main="Sleep Hours Distribution", xlab="Sleep Hours", col="lightpink")
-hist(as.numeric(nhanes_data$Gender), main="Gender Distribution", xlab="Gender (0=Female, 1=Male)", col="lightgray")
-par(mfrow = c(1, 1))  # Reset plot layout
+hist(
+  nhanes_data$BMI,
+  main = "BMI Distribution",
+  xlab = "BMI",
+  col = "lightblue"
+)
+hist(
+  nhanes_data$Poverty,
+  main = "Poverty Index Distribution",
+  xlab = "Poverty Index",
+  col = "lightgreen"
+)
+hist(
+  nhanes_data$PhysActiveDays,
+  main = "Physical Activity Days Distribution",
+  xlab = "Phys Active Days",
+  col = "lightcoral"
+)
+hist(
+  nhanes_data$Age,
+  main = "Age Distribution",
+  xlab = "Age",
+  col = "lightyellow"
+)
+hist(
+  nhanes_data$SleepHrsNight,
+  main = "Sleep Hours Distribution",
+  xlab = "Sleep Hours",
+  col = "lightpink"
+)
+hist(
+  as.numeric(nhanes_data$Gender),
+  main = "Gender Distribution",
+  xlab = "Gender (0=Female, 1=Male)",
+  col = "lightgray"
+)
 ```
 ```{r}
-png("plots.png", width = 3000, height = 3000) # Adjust the size as needed
+png("plots.png", width = 3000, height = 3000) # Adjust the size
 par(mfrow = c(4, 4),         # 4x4 grid layout
-    mar = c(5, 5, 4, 2),     # Plot margins: bottom, left, top, right
-    oma = c(5, 5, 5, 5))     # Outer margins: bottom, left, top, right (adds blank space around edges)
+    mar = c(5, 5, 4, 2),     # Plot margins
+    oma = c(5, 5, 5, 5))     # adds blank space around edges
 
 # Customize text sizes
-par(cex.main = 4,    # Title size
-    cex.lab = 3,   # Axis label size
-    cex.axis = 2) 
+par(cex.main = 4,    
+    cex.lab = 3,   
+    cex.axis = 2)
 
+# Extract the fitted values from the linear model
 fitted_values = fitted(lm_model)
+
+# Extract the residuals
 residual_values = resid(lm_model)
-     
+
+# Plot the fitted values vs. the residual values     
 plot(fitted_values, residual_values, 
      main = "Figure1: fitted versus residual values", 
      xlab = "Fitted", 
      ylab = "Residuals")
 
-
+# Extract the standardized residuals
 sresidual_values = rstandard(lm_model)
-     
+
+# Plot fitted values vs. standardized residuals
 plot(fitted_values, sresidual_values, 
      main = "Figure2: fitted vs. standardized residuals values", 
      xlab = "Fitted", 
      ylab = "Standardized Residuals")
 
-
+# Plot a histogram of the standardized residuals
 hist(sresidual_values,
      main = "Figure3: Standardized residuals histogram",
      xlab = "Standardized residuals")
@@ -133,9 +166,11 @@ plot(nhanes_data$Gender, residual_values,
      xlab = "Gender", 
      ylab = "Residuals")
 
+#Log-transform the BMI values from the dataset
 BMI_values = log(nhanes_data$BMI)
 fitted_values = fitted(lm_model)
 
+# Plot the fitted values (predicted log(BMI)) against the actual log(BMI) values
 plot(fitted_values, BMI_values,
      main = "Figure7: regression fit vs. BMI",
      xlab = "Fitted values", ylab = "log(BMI)")
@@ -147,62 +182,58 @@ legend("bottomright", legend=c("y = x line"),
 
 # Normal Q-Q plot
 plot(lm_model, which = 2)
-
-# Add a title to the plot
 title(main = "Figure8: Normal Q-Q Plot")
 
-
-# Scatter plot for continuous variables
+# Scatter plot for Age vs. log(BMI)
 plot(nhanes_data$Age, log(nhanes_data$BMI), 
      main = "Figure9: Age vs. BMI", 
      xlab = "Age", 
      ylab = "log(BMI)")
 
-
-fit <- lm(log(nhanes_data$BMI) ~ nhanes_data$Age)
-
 # Add the fitted regression line
+fit <- lm(log(nhanes_data$BMI) ~ nhanes_data$Age)
 abline(fit, col = "red", lwd = 2)
 
 
-# Scatter plot for continuous variables
+# Scatter plot for Gender vs. log(BMI)
 plot(nhanes_data$Gender, log(nhanes_data$BMI), 
      main = "Figure10: Gender vs. BMI", 
      xlab = "Gender", 
      ylab = "log(BMI)")
 
-fit <- lm(log(nhanes_data$BMI) ~ nhanes_data$Gender)
-
 # Add the fitted regression line
+fit <- lm(log(nhanes_data$BMI) ~ nhanes_data$Gender)
 abline(fit, col = "red", lwd = 2)
 
+# Scatter plot for Poverty vs. log(BMI)
 plot(nhanes_data$Poverty, log(nhanes_data$BMI), 
      main = "Figure11: Poverty vs. BMI", 
      xlab = "Poverty", 
      ylab = "log(BMI)")
 
-fit <- lm(log(nhanes_data$BMI) ~ nhanes_data$Poverty)
-
 # Add the fitted regression line
+fit <- lm(log(nhanes_data$BMI) ~ nhanes_data$Poverty)
 abline(fit, col = "red", lwd = 2)
+
+# Scatter plot for SleepHrsNight vs. log(BMI)
 
 plot(nhanes_data$SleepHrsNight, log(nhanes_data$BMI), 
      main = "Figure12: SleepHrsNight vs. BMI", 
      xlab = "SleepHrsNight", 
      ylab = "log(BMI)")
 
-fit <- lm(log(nhanes_data$BMI) ~ nhanes_data$SleepHrsNight)
-
 # Add the fitted regression line
+fit <- lm(log(nhanes_data$BMI) ~ nhanes_data$SleepHrsNight)
 abline(fit, col = "red", lwd = 2)
 
+# Scatter plot for PhysActiveDays vs. log(BMI)
 plot(nhanes_data$PhysActiveDays, log(nhanes_data$BMI), 
      main = "Figure13: Physical Active Days vs. BMI", 
      xlab = "PhysActiveDays", 
      ylab = "log(BMI)")
-fit <- lm(log(nhanes_data$BMI) ~ nhanes_data$PhysActiveDays)
 
 # Add the fitted regression line
+fit <- lm(log(nhanes_data$BMI) ~ nhanes_data$PhysActiveDays)
 abline(fit, col = "red", lwd = 2)
 
 dev.off() # Save the file
