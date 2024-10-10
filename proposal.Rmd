@@ -42,14 +42,8 @@ data(NHANES)
 nhanes_data <- NHANES %>%
   select(BMI, Poverty, PhysActiveDays, Age, SleepHrsNight, Gender) %>%
   filter(
-    !is.na(BMI),
-    !is.na(Poverty),
-    !is.na(PhysActiveDays),
-    !is.na(Age),
-    !is.na(SleepHrsNight),
-    !is.na(Gender)
+    !is.na(BMI),!is.na(Poverty),!is.na(PhysActiveDays),!is.na(Age),!is.na(SleepHrsNight),!is.na(Gender)
   )
-
 
 # Check the first few rows to make sure everything looks correct
 head(nhanes_data)
@@ -112,13 +106,17 @@ hist(
 ```
 ```{r}
 png("plots.png", width = 3000, height = 3000) # Adjust the size
-par(mfrow = c(4, 4),         # 4x4 grid layout
-    mar = c(5, 5, 4, 2),     # Plot margins
-    oma = c(5, 5, 5, 5))     # adds blank space around edges
+par(
+  mfrow = c(4, 4),
+  # 4x4 grid layout
+  mar = c(5, 5, 4, 2),
+  # Plot margins
+  oma = c(5, 5, 5, 5)
+)     # adds blank space around edges
 
 # Customize text sizes
-par(cex.main = 4,    
-    cex.lab = 3,   
+par(cex.main = 4,
+    cex.lab = 3,
     cex.axis = 2)
 
 # Extract the fitted values from the linear model
@@ -127,57 +125,77 @@ fitted_values = fitted(lm_model)
 # Extract the residuals
 residual_values = resid(lm_model)
 
-# Plot the fitted values vs. the residual values     
-plot(fitted_values, residual_values, 
-     main = "Figure1: fitted versus residual values", 
-     xlab = "Fitted", 
-     ylab = "Residuals")
+# Plot the fitted values vs. the residual values
+plot(
+  fitted_values,
+  residual_values,
+  main = "Figure1: fitted versus residual values",
+  xlab = "Fitted",
+  ylab = "Residuals"
+)
 
 # Extract the standardized residuals
 sresidual_values = rstandard(lm_model)
 
 # Plot fitted values vs. standardized residuals
-plot(fitted_values, sresidual_values, 
-     main = "Figure2: fitted vs. standardized residuals values", 
-     xlab = "Fitted", 
-     ylab = "Standardized Residuals")
+plot(
+  fitted_values,
+  sresidual_values,
+  main = "Figure2: fitted vs. standardized residuals values",
+  xlab = "Fitted",
+  ylab = "Standardized Residuals"
+)
 
 # Plot a histogram of the standardized residuals
-hist(sresidual_values,
-     main = "Figure3: Standardized residuals histogram",
-     xlab = "Standardized residuals")
+hist(sresidual_values, main = "Figure3: Standardized residuals histogram", xlab = "Standardized residuals")
 
 
 # Plot residuals against Poverty
-plot(nhanes_data$Poverty, residual_values, 
-     main = "Figure4: Poverty vs. Residuals", 
-     xlab = "Poverty", 
-     ylab = "Residuals")
+plot(
+  nhanes_data$Poverty,
+  residual_values,
+  main = "Figure4: Poverty vs. Residuals",
+  xlab = "Poverty",
+  ylab = "Residuals"
+)
 
 # Plot residuals against Age
-plot(nhanes_data$Age, residual_values, 
-     main = "Figure5: Age vs. Residuals", 
-     xlab = "Age", 
-     ylab = "Residuals")
+plot(
+  nhanes_data$Age,
+  residual_values,
+  main = "Figure5: Age vs. Residuals",
+  xlab = "Age",
+  ylab = "Residuals"
+)
 
 # Plot residuals against Gender
-plot(nhanes_data$Gender, residual_values, 
-     main = "Figure6: Gender vs. Residuals", 
-     xlab = "Gender", 
-     ylab = "Residuals")
+plot(
+  nhanes_data$Gender,
+  residual_values,
+  main = "Figure6: Gender vs. Residuals",
+  xlab = "Gender",
+  ylab = "Residuals"
+)
 
 #Log-transform the BMI values from the dataset
 BMI_values = log(nhanes_data$BMI)
 fitted_values = fitted(lm_model)
 
 # Plot the fitted values (predicted log(BMI)) against the actual log(BMI) values
-plot(fitted_values, BMI_values,
-     main = "Figure7: regression fit vs. BMI",
-     xlab = "Fitted values", ylab = "log(BMI)")
-abline(0, 1, 
-       col=c("blue"), lty=1)
-legend("bottomright", legend=c("y = x line"),
-       col=c("blue"), lty=1)
+plot(
+  fitted_values,
+  BMI_values,
+  main = "Figure7: regression fit vs. BMI",
+  xlab = "Fitted values",
+  ylab = "log(BMI)"
+)
+abline(0, 1, col = c("blue"), lty = 1)
+legend(
+  "bottomright",
+  legend = c("y = x line"),
+  col = c("blue"),
+  lty = 1
+)
 
 
 # Normal Q-Q plot
@@ -185,10 +203,13 @@ plot(lm_model, which = 2)
 title(main = "Figure8: Normal Q-Q Plot")
 
 # Scatter plot for Age vs. log(BMI)
-plot(nhanes_data$Age, log(nhanes_data$BMI), 
-     main = "Figure9: Age vs. BMI", 
-     xlab = "Age", 
-     ylab = "log(BMI)")
+plot(
+  nhanes_data$Age,
+  log(nhanes_data$BMI),
+  main = "Figure9: Age vs. BMI",
+  xlab = "Age",
+  ylab = "log(BMI)"
+)
 
 # Add the fitted regression line
 fit <- lm(log(nhanes_data$BMI) ~ nhanes_data$Age)
@@ -196,20 +217,26 @@ abline(fit, col = "red", lwd = 2)
 
 
 # Scatter plot for Gender vs. log(BMI)
-plot(nhanes_data$Gender, log(nhanes_data$BMI), 
-     main = "Figure10: Gender vs. BMI", 
-     xlab = "Gender", 
-     ylab = "log(BMI)")
+plot(
+  nhanes_data$Gender,
+  log(nhanes_data$BMI),
+  main = "Figure10: Gender vs. BMI",
+  xlab = "Gender",
+  ylab = "log(BMI)"
+)
 
 # Add the fitted regression line
 fit <- lm(log(nhanes_data$BMI) ~ nhanes_data$Gender)
 abline(fit, col = "red", lwd = 2)
 
 # Scatter plot for Poverty vs. log(BMI)
-plot(nhanes_data$Poverty, log(nhanes_data$BMI), 
-     main = "Figure11: Poverty vs. BMI", 
-     xlab = "Poverty", 
-     ylab = "log(BMI)")
+plot(
+  nhanes_data$Poverty,
+  log(nhanes_data$BMI),
+  main = "Figure11: Poverty vs. BMI",
+  xlab = "Poverty",
+  ylab = "log(BMI)"
+)
 
 # Add the fitted regression line
 fit <- lm(log(nhanes_data$BMI) ~ nhanes_data$Poverty)
@@ -217,20 +244,26 @@ abline(fit, col = "red", lwd = 2)
 
 # Scatter plot for SleepHrsNight vs. log(BMI)
 
-plot(nhanes_data$SleepHrsNight, log(nhanes_data$BMI), 
-     main = "Figure12: SleepHrsNight vs. BMI", 
-     xlab = "SleepHrsNight", 
-     ylab = "log(BMI)")
+plot(
+  nhanes_data$SleepHrsNight,
+  log(nhanes_data$BMI),
+  main = "Figure12: SleepHrsNight vs. BMI",
+  xlab = "SleepHrsNight",
+  ylab = "log(BMI)"
+)
 
 # Add the fitted regression line
 fit <- lm(log(nhanes_data$BMI) ~ nhanes_data$SleepHrsNight)
 abline(fit, col = "red", lwd = 2)
 
 # Scatter plot for PhysActiveDays vs. log(BMI)
-plot(nhanes_data$PhysActiveDays, log(nhanes_data$BMI), 
-     main = "Figure13: Physical Active Days vs. BMI", 
-     xlab = "PhysActiveDays", 
-     ylab = "log(BMI)")
+plot(
+  nhanes_data$PhysActiveDays,
+  log(nhanes_data$BMI),
+  main = "Figure13: Physical Active Days vs. BMI",
+  xlab = "PhysActiveDays",
+  ylab = "log(BMI)"
+)
 
 # Add the fitted regression line
 fit <- lm(log(nhanes_data$BMI) ~ nhanes_data$PhysActiveDays)
