@@ -83,13 +83,48 @@ par(cex.main = 2,
 
 # Plot histograms for each variable
 
-hist(nhanes_data$BMI, main="figure1: BMI Distribution", xlab="BMI", col="lightblue")
-hist(log(nhanes_data$BMI), main="figure2: log(BMI) Distribution", xlab="log(BMI)", col="lightblue")
-hist(nhanes_data$Poverty, main="figure3: Poverty Index Distribution", xlab="Poverty Index", col="lightgreen")
-hist(nhanes_data$PhysActiveDays, main="figure4: Physical Activity Days Distribution", xlab="Phys Active Days", col="lightcoral")
-hist(nhanes_data$Age, main="figure5: Age Distribution", xlab="Age", col="lightyellow")
-hist(nhanes_data$SleepHrsNight, main="figure6: Sleep Hours Distribution", xlab="Sleep Hours", col="lightpink")
-hist(as.numeric(nhanes_data$Gender), main="figure7: Gender Distribution", xlab="Gender (0=Female, 1=Male)", col="lightgray")
+hist(
+  nhanes_data$BMI,
+  main = "figure1: BMI Distribution",
+  xlab = "BMI",
+  col = "lightblue"
+)
+hist(
+  log(nhanes_data$BMI),
+  main = "figure2: log(BMI) Distribution",
+  xlab = "log(BMI)",
+  col = "lightblue"
+)
+hist(
+  nhanes_data$Poverty,
+  main = "figure3: Poverty Index Distribution",
+  xlab = "Poverty Index",
+  col = "lightgreen"
+)
+hist(
+  nhanes_data$PhysActiveDays,
+  main = "figure4: Physical Activity Days Distribution",
+  xlab = "Phys Active Days",
+  col = "lightcoral"
+)
+hist(
+  nhanes_data$Age,
+  main = "figure5: Age Distribution",
+  xlab = "Age",
+  col = "lightyellow"
+)
+hist(
+  nhanes_data$SleepHrsNight,
+  main = "figure6: Sleep Hours Distribution",
+  xlab = "Sleep Hours",
+  col = "lightpink"
+)
+hist(
+  as.numeric(nhanes_data$Gender),
+  main = "figure7: Gender Distribution",
+  xlab = "Gender (0=Female, 1=Male)",
+  col = "lightgray"
+)
 
 dev.off() # Save the file
 ```
@@ -265,6 +300,19 @@ dev.off() # Save the file
 ```
 
 
+```{r}
+# Create the summary data
+summary_data <- data.frame(
+  Variable = c("Log(BMI)", "Poverty", "PhysActiveDays", "Age", "SleepHrsNight", "Gender (Female)"),
+  Min = c(2.709, 0.0, 1.0, 16.0, 2.0, "1814 (Male)"),
+  `1st Quartile` = c(3.157, 1.45, 2.0, 29.0, 6.0, ""),
+  Median = c(3.294, 3.17, 3.0, 43.0, 7.0, ""),
+  Mean = c(3.308, 3.077, 3.709, 43.61, 6.956, ""),
+  `3rd Quartile` = c(3.444, 5.0, 5.0, 56.0, 8.0, ""),
+  Max = c(4.148, 5.0, 7.0, 80.0, 12.0, "1759 (Female)")
+)
+
+```
 
 
 
