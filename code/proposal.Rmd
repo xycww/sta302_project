@@ -63,54 +63,40 @@ summary(lm_model)
 ```
 
 
-
-```{r}
-# Plot histograms for each variable
-par(mfrow = c(2, 3))  # Arrange plots in 2 rows and 3 columns
-hist(
-  nhanes_data$BMI,
-  main = "BMI Distribution",
-  xlab = "BMI",
-  col = "lightblue"
-)
-hist(
-  nhanes_data$Poverty,
-  main = "Poverty Index Distribution",
-  xlab = "Poverty Index",
-  col = "lightgreen"
-)
-hist(
-  nhanes_data$PhysActiveDays,
-  main = "Physical Activity Days Distribution",
-  xlab = "Phys Active Days",
-  col = "lightcoral"
-)
-hist(
-  nhanes_data$Age,
-  main = "Age Distribution",
-  xlab = "Age",
-  col = "lightyellow"
-)
-hist(
-  nhanes_data$SleepHrsNight,
-  main = "Sleep Hours Distribution",
-  xlab = "Sleep Hours",
-  col = "lightpink"
-)
-hist(
-  as.numeric(nhanes_data$Gender),
-  main = "Gender Distribution",
-  xlab = "Gender (0=Female, 1=Male)",
-  col = "lightgray"
-)
-```
-
 ```{r}
 plot(nhanes_data[, c(1, 2, 3, 4, 5, 6)], col="cadetblue")
 ```
+```{r}
+png("histogram_plots.png", width = 1200, height = 1200) # Adjust the size
+par(
+  mfrow = c(3, 3),
+  # 2x4 grid layout
+  mar = c(5, 5, 4, 2),
+  # Plot margins
+  oma = c(5, 5, 5, 5)
+)     # adds blank space around edges
+
+# Customize text sizes
+par(cex.main = 2,
+    cex.lab = 1.5,
+    cex.axis = 1.5)
+
+# Plot histograms for each variable
+
+hist(nhanes_data$BMI, main="figure1: BMI Distribution", xlab="BMI", col="lightblue")
+hist(log(nhanes_data$BMI), main="figure2: log(BMI) Distribution", xlab="log(BMI)", col="lightblue")
+hist(nhanes_data$Poverty, main="figure3: Poverty Index Distribution", xlab="Poverty Index", col="lightgreen")
+hist(nhanes_data$PhysActiveDays, main="figure4: Physical Activity Days Distribution", xlab="Phys Active Days", col="lightcoral")
+hist(nhanes_data$Age, main="figure5: Age Distribution", xlab="Age", col="lightyellow")
+hist(nhanes_data$SleepHrsNight, main="figure6: Sleep Hours Distribution", xlab="Sleep Hours", col="lightpink")
+hist(as.numeric(nhanes_data$Gender), main="figure7: Gender Distribution", xlab="Gender (0=Female, 1=Male)", col="lightgray")
+
+dev.off() # Save the file
+```
+
 
 ```{r}
-png("plots.png", width = 3000, height = 3000) # Adjust the size
+png("NHANES_plots.png", width = 3000, height = 3000) # Adjust the size
 par(
   mfrow = c(4, 4),
   # 4x4 grid layout
@@ -134,7 +120,7 @@ residual_values = resid(lm_model)
 plot(
   fitted_values,
   residual_values,
-  main = "Figure1: fitted versus residual values",
+  main = "Figure8: fitted versus residual values",
   xlab = "Fitted",
   ylab = "Residuals"
 )
@@ -146,20 +132,20 @@ sresidual_values = rstandard(lm_model)
 plot(
   fitted_values,
   sresidual_values,
-  main = "Figure2: fitted vs. standardized residuals values",
+  main = "Figure9: fitted vs. standardized residuals values",
   xlab = "Fitted",
   ylab = "Standardized Residuals"
 )
 
 # Plot a histogram of the standardized residuals
-hist(sresidual_values, main = "Figure3: Standardized residuals histogram", xlab = "Standardized residuals")
+hist(sresidual_values, main = "Figure10: Standardized residuals histogram", xlab = "Standardized residuals")
 
 
 # Plot residuals against Poverty
 plot(
   nhanes_data$Poverty,
   residual_values,
-  main = "Figure4: Poverty vs. Residuals",
+  main = "Figure11: Poverty vs. Residuals",
   xlab = "Poverty",
   ylab = "Residuals"
 )
@@ -168,7 +154,7 @@ plot(
 plot(
   nhanes_data$Age,
   residual_values,
-  main = "Figure5: Age vs. Residuals",
+  main = "Figure12: Age vs. Residuals",
   xlab = "Age",
   ylab = "Residuals"
 )
@@ -177,7 +163,7 @@ plot(
 plot(
   nhanes_data$Gender,
   residual_values,
-  main = "Figure6: Gender vs. Residuals",
+  main = "Figure13: Gender vs. Residuals",
   xlab = "Gender",
   ylab = "Residuals"
 )
@@ -190,7 +176,7 @@ fitted_values = fitted(lm_model)
 plot(
   fitted_values,
   BMI_values,
-  main = "Figure7: regression fit vs. BMI",
+  main = "Figure14: regression fit vs. BMI",
   xlab = "Fitted values",
   ylab = "log(BMI)"
 )
@@ -205,13 +191,13 @@ legend(
 
 # Normal Q-Q plot
 plot(lm_model, which = 2)
-title(main = "Figure8: Normal Q-Q Plot")
+title(main = "Figure15: Normal Q-Q Plot")
 
 # Scatter plot for Age vs. log(BMI)
 plot(
   nhanes_data$Age,
   log(nhanes_data$BMI),
-  main = "Figure9: Age vs. BMI",
+  main = "Figure16: Age vs. BMI",
   xlab = "Age",
   ylab = "log(BMI)"
 )
@@ -225,7 +211,7 @@ abline(fit, col = "red", lwd = 2)
 plot(
   nhanes_data$Gender,
   log(nhanes_data$BMI),
-  main = "Figure10: Gender vs. BMI",
+  main = "Figure17: Gender vs. BMI",
   xlab = "Gender",
   ylab = "log(BMI)"
 )
@@ -238,7 +224,7 @@ abline(fit, col = "red", lwd = 2)
 plot(
   nhanes_data$Poverty,
   log(nhanes_data$BMI),
-  main = "Figure11: Poverty vs. BMI",
+  main = "Figure18: Poverty vs. BMI",
   xlab = "Poverty",
   ylab = "log(BMI)"
 )
@@ -252,7 +238,7 @@ abline(fit, col = "red", lwd = 2)
 plot(
   nhanes_data$SleepHrsNight,
   log(nhanes_data$BMI),
-  main = "Figure12: SleepHrsNight vs. BMI",
+  main = "Figure19: SleepHrsNight vs. BMI",
   xlab = "SleepHrsNight",
   ylab = "log(BMI)"
 )
@@ -265,7 +251,7 @@ abline(fit, col = "red", lwd = 2)
 plot(
   nhanes_data$PhysActiveDays,
   log(nhanes_data$BMI),
-  main = "Figure13: Physical Active Days vs. BMI",
+  main = "Figure20: Physical Active Days vs. BMI",
   xlab = "PhysActiveDays",
   ylab = "log(BMI)"
 )
@@ -277,6 +263,7 @@ abline(fit, col = "red", lwd = 2)
 dev.off() # Save the file
 
 ```
+
 
 
 
